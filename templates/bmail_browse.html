@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>bMail Browse</title>
+</head>
+<body>
+
+<ul>
+  <li><a class="active" href="#home">Received</a></li>
+  <li><a href="#Sent">Sent</a></li>
+  <li><a href="edit">New</a></li>
+</ul>
+
+    <h1>Messages</h1>
+
+    {% for msg in messages %}
+        <p>{{ msg.from_user }}, {{ msg.to_user }}, {{ msg.key.id() }}, {{ msg.msg_text }}</p>
+    {% endfor %}
+</body>
+</html>
