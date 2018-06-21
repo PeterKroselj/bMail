@@ -5,6 +5,7 @@
     <title>New Message</title>
 
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style-editmsg.css" type="text/css">
 </head>
 <body>
   <h1>New Message from User: {{ user_name }}</h1>
@@ -13,8 +14,12 @@
 
     <form method="post" action="/edit/{{ user_id }}">
         <!-- <input name="from_user"> -->
-        <input name="to_user">
-        <input name="msg_text">
+        <h4 id="to_user_label">To: </h4>
+        <input name="to_user" id="to_user_edit">
+        <br>
+        <h4 id="msg_text_label">Message: </h4>
+        <input name="msg_text" id="msg_text_edit">
+        <br>
         <button type="submit">Send</button>
     </form>
 

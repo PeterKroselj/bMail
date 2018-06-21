@@ -115,6 +115,10 @@ class BrowseMsgHandler(BaseHandler):
     def get(self):
         return self.render_template("bmail_browse.html")
 
+class BoogleHandler(BaseHandler):
+    def get(self):
+        return self.render_template("signin.html")
+
 class ReceivedMsgHandler(BaseHandler):
     def get(self, user_id):
         account = BAccount.get_by_id(int(user_id))
@@ -136,6 +140,7 @@ class SentMsgHandler(BaseHandler):
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', LoginHandler, name="login_form"),
+    webapp2.Route('/boogle', BoogleHandler, name="boogle_form"),
     webapp2.Route('/create', CreateHandler, name="create_form"),
     webapp2.Route('/browse', BrowseMsgHandler, name="browse_msg"),
     webapp2.Route('/edit/<user_id:\d+>', EditMsgHandler, name="edit_msg"),

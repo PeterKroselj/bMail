@@ -1,0 +1,22 @@
+#to_user_label {
+  width: 250px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+to_user_edit {
+  width: 250px;
+  padding-top: 0px;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+#msg_text_label {
+  width: 500px;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+#msg_text_edit {
+  width: 500px;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
