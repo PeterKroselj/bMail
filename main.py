@@ -37,16 +37,17 @@ class LoginHandler(BaseHandler):
         return self.render_template("bLogin.html")
 
     def post(self):
-        user_name = self.request.get("user_name")
+        user_name = self.request.get("user_name").lower()
         user_passwd = self.request.get("user_passwd")
         hash_passwd = hmac.new(str(user_passwd)).hexdigest()
 
         account_list = BAccount.query(BAccount.user_name == user_name).fetch()
 
         for account in account_list:
-            if (user_name == account.user_name) and (hash_passwd == account.user_passwd):
+            if (user_name == account.user_name.lower()) and (hash_passwd == account.user_passwd):
                 messages = BMailMsg.query(BMailMsg.to_user == user_name).fetch()
                 user_id = account.key.id()
+                messages = sorted(messages, key=lambda msg: msg.sent_date, reverse=True)
                 params = {"sent": False, "user_id": user_id, "user_name": user_name, "messages": messages}
                 return self.render_template("bmail_browse.html", params=params)
 
@@ -58,7 +59,7 @@ class CreateHandler(BaseHandler):
         return self.render_template("bCreate.html")
 
     def post(self):
-        user_name = self.request.get("user_name")
+        user_name = self.request.get("user_name").lower()
         user_passwd_1 = self.request.get("user_passwd_1")
         user_passwd_2 = self.request.get("user_passwd_2")
 
@@ -78,7 +79,7 @@ class CreateHandler(BaseHandler):
         account_list = BAccount.query(BAccount.user_name == user_name).fetch()
 
         for account in account_list:
-            if user_name == account.user_name:
+            if user_name == account.user_name.lower():
                 params = {"ErrorMsg": "Username already exists!"}
                 return self.render_template("bCreate.html", params=params)
 
@@ -98,15 +99,15 @@ class EditMsgHandler(BaseHandler):
 
     def post(self, user_id):
         account = BAccount.get_by_id(int(user_id))
-        from_user = account.user_name
-        to_user = self.request.get("to_user")
+        from_user = account.user_name.lower()
+        to_user = self.request.get("to_user").lower()
         msg_text = self.request.get("msg_text")
 
         msg = BMailMsg(from_user=from_user, to_user=to_user, msg_text=msg_text)
         msg.put()
         time.sleep(0.3)
-
         messages = BMailMsg.query(BMailMsg.from_user == from_user).fetch()
+        messages = sorted(messages, key=lambda msg: msg.sent_date, reverse=True)
         params = {"sent": True, "user_id": user_id, "user_name": from_user, "messages": messages}
         return self.render_template("bmail_browse.html", params=params)
 
@@ -118,7 +119,8 @@ class ReceivedMsgHandler(BaseHandler):
     def get(self, user_id):
         account = BAccount.get_by_id(int(user_id))
         user_name = account.user_name
-        messages = BMailMsg.query(BMailMsg.to_user == user_name).fetch()
+        messages = BMailMsg.query(BMailMsg.to_user == user_name.lower()).fetch()
+        messages = sorted(messages, key=lambda msg: msg.sent_date, reverse=True)
         params = {"sent": False, "user_id": user_id, "user_name": user_name, "messages": messages}
         return self.render_template("bmail_browse.html", params=params)
 
@@ -126,7 +128,8 @@ class SentMsgHandler(BaseHandler):
     def get(self, user_id):
         account = BAccount.get_by_id(int(user_id))
         user_name = account.user_name
-        messages = BMailMsg.query(BMailMsg.from_user == user_name).fetch()
+        messages = BMailMsg.query(BMailMsg.from_user == user_name.lower()).fetch()
+        messages = sorted(messages, key=lambda msg: msg.sent_date, reverse=True)
         params = {"sent": True, "user_id": user_id, "user_name": user_name, "messages": messages}
         return self.render_template("bmail_browse.html", params=params)
 

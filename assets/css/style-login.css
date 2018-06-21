@@ -101,16 +101,16 @@ h2 {
   font-weight: bold;
   font-size:18px;
   display: block;
-  margin-left: 200px;
   margin-bottom: 35px;
+  text-align: center;
 }
 #login a {
   color: #498af2;
   font-weight: bold;
   font-size:18px;
   display: block;
-  margin-left: 200px;
   margin-bottom: 35px;
+  text-align: center;
 }
 p {
   font-size:18px;
