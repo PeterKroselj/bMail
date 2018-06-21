@@ -20,3 +20,11 @@ to_user_edit {
   margin-top: 0px;
   margin-bottom: 20px;
 }
+#logout-link {
+  text_align: right;
+  margin-left: auto;
+}
+#logout-item {
+  text_align: right;
+  margin-left: auto;
+}
