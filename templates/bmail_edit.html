@@ -14,16 +14,16 @@
 </head>
 <body>
   <div class="container">
-  <h1>New Message from User: {{ user_name }}</h1>
+  <h2>New Message from User: {{ user_name }}</h2>
 
-  <h3>User ID: {{ user_id }}</h3>
+  <h4>User ID: {{ user_id }}</h4>
 
     <form method="post" action="/edit/{{ user_id }}">
         <!-- <input name="from_user"> -->
-        <h4 id="to_user_label">To: </h4>
+        <h5 id="to_user_label">To: </h5>
         <input name="to_user" id="to_user_edit">
         <br>
-        <h4 id="msg_text_label">Message: </h4>
+        <h5 id="msg_text_label">Message: </h5>
         <input name="msg_text" id="msg_text_edit">
         <br>
         <button type="submit">Send</button>

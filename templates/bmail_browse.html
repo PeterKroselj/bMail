@@ -10,11 +10,11 @@
 <body>
   <div class="container">
 
-  <ul>
-    <li><a class="active" href="/received/{{ user_id }}">Received</a></li>
-    <li><a href="/sent/{{ user_id }}">Sent</a></li>
-    <li><a href="/edit/{{ user_id }}">New</a></li>
-    <li><a href="/">Logout</a></li>
+  <ul class="nav">
+    <li class="nav-item"><a class="nav-link active" href="/received/{{ user_id }}">Received</a></li>
+    <li class="nav-item"><a class="nav-link" href="/sent/{{ user_id }}">Sent</a></li>
+    <li class="nav-item"><a class="nav-link" href="/edit/{{ user_id }}">New</a></li>
+    <li class="nav-item"><a class="nav-link" href="/">Sign Out</a></li>
   </ul>
 
     {% if sent %}
