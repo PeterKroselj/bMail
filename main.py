@@ -4,6 +4,7 @@ import jinja2
 import webapp2
 import time
 import datetime
+import hmac
 
 from models import BMailMsg
 from models import BAccount
@@ -38,11 +39,12 @@ class LoginHandler(BaseHandler):
     def post(self):
         user_name = self.request.get("user_name")
         user_passwd = self.request.get("user_passwd")
+        hash_passwd = hmac.new(str(user_passwd)).hexdigest()
 
         account_list = BAccount.query(BAccount.user_name == user_name).fetch()
 
         for account in account_list:
-            if (user_name == account.user_name) and (user_passwd == account.user_passwd):
+            if (user_name == account.user_name) and (hash_passwd == account.user_passwd):
                 messages = BMailMsg.query(BMailMsg.to_user == user_name).fetch()
                 user_id = account.key.id()
                 params = {"sent": False, "user_id": user_id, "user_name": user_name, "messages": messages}
@@ -80,7 +82,8 @@ class CreateHandler(BaseHandler):
                 params = {"ErrorMsg": "Username already exists!"}
                 return self.render_template("bCreate.html", params=params)
 
-        account = BAccount(user_name=user_name, user_passwd=user_passwd_1)
+        hash_passwd = hmac.new(str(user_passwd_1)).hexdigest()
+        account = BAccount(user_name=user_name, user_passwd=hash_passwd)
         account.put()
         return self.redirect_to("login_form")
 
