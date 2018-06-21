@@ -25,7 +25,11 @@
         </div>
         <form method="post" action="/">
           <div id="email-input">
+          {% if user_name %}
+            <input placeholder={{ user_name }} type="mail" name="user_name"/>
+          {% else %}
             <input placeholder="Enter your username" type="mail" name="user_name"/>
+          {% endif %}
           </div>
           <div id="password-input-1">
             <input placeholder="Password" type="password" name="user_passwd"/>

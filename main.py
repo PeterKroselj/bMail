@@ -2,6 +2,8 @@
 import os
 import jinja2
 import webapp2
+import time
+import datetime
 
 from models import BMailMsg
 from models import BAccount
@@ -31,8 +33,7 @@ class BaseHandler(webapp2.RequestHandler):
 
 class LoginHandler(BaseHandler):
     def get(self):
-        params = {"user": self.request.get("user_name")}
-        return self.render_template("bLogin.html", params=params)
+        return self.render_template("bLogin.html")
 
     def post(self):
         user_name = self.request.get("user_name")
@@ -42,23 +43,23 @@ class LoginHandler(BaseHandler):
 
         for account in account_list:
             if (user_name == account.user_name) and (user_passwd == account.user_passwd):
-                return self.redirect_to("browse_msg")
+                messages = BMailMsg.query(BMailMsg.to_user == user_name).fetch()
+                user_id = account.key.id()
+                params = {"sent": False, "user_id": user_id, "user_name": user_name, "messages": messages}
+                return self.render_template("bmail_browse.html", params=params)
 
         params = {"ErrorMsg": "Wrong username or password!"}
         return self.render_template("bLogin.html", params=params)
 
 class CreateHandler(BaseHandler):
     def get(self):
-        params = {"user": self.request.get("user_name")}
-        return self.render_template("bCreate.html", params=params)
+        return self.render_template("bCreate.html")
 
     def post(self):
         user_name = self.request.get("user_name")
         user_passwd_1 = self.request.get("user_passwd_1")
         user_passwd_2 = self.request.get("user_passwd_2")
 
-        #rezultat = "User: " + user_name + " Password 1: " + user_passwd_1 + " Password 2: " + user_passwd_2
-        #return self.write(rezultat)
 
         if user_name.strip() == "":
             params = {"ErrorMsg": "Enter username!"}
@@ -86,38 +87,52 @@ class CreateHandler(BaseHandler):
 
 
 class EditMsgHandler(BaseHandler):
-    def get(self):
-        params = {"sporocilo": self.request.get("arg1")}
+    def get(self, user_id):
+        account = BAccount.get_by_id(int(user_id))
+        user_name = account.user_name
+        params = {"sent": False, "user_id": user_id, "user_name": user_name}
         return self.render_template("bmail_edit.html", params=params)
 
-    def post(self):
-        from_user = self.request.get("from_user")
+    def post(self, user_id):
+        account = BAccount.get_by_id(int(user_id))
+        from_user = account.user_name
         to_user = self.request.get("to_user")
         msg_text = self.request.get("msg_text")
 
         msg = BMailMsg(from_user=from_user, to_user=to_user, msg_text=msg_text)
         msg.put()
+        time.sleep(0.3)
 
-        #rezultat = "From: " + from_user + " To: " + to_user + " Message: " + msg_text
-        #return self.write(rezultat)
-
-        #messages = BMailMsg.query().fetch()
-        #params = {"messages": messages}
-        #return self.render_template("bmail_browse.html", params=params)
-
-        return self.redirect_to("browse_msg")
+        messages = BMailMsg.query(BMailMsg.from_user == from_user).fetch()
+        params = {"sent": True, "user_id": user_id, "user_name": from_user, "messages": messages}
+        return self.render_template("bmail_browse.html", params=params)
 
 class BrowseMsgHandler(BaseHandler):
     def get(self):
-        messages = BMailMsg.query().fetch()
-        params = {"messages": messages}
+        return self.render_template("bmail_browse.html")
+
+class ReceivedMsgHandler(BaseHandler):
+    def get(self, user_id):
+        account = BAccount.get_by_id(int(user_id))
+        user_name = account.user_name
+        messages = BMailMsg.query(BMailMsg.to_user == user_name).fetch()
+        params = {"sent": False, "user_id": user_id, "user_name": user_name, "messages": messages}
         return self.render_template("bmail_browse.html", params=params)
 
+class SentMsgHandler(BaseHandler):
+    def get(self, user_id):
+        account = BAccount.get_by_id(int(user_id))
+        user_name = account.user_name
+        messages = BMailMsg.query(BMailMsg.from_user == user_name).fetch()
+        params = {"sent": True, "user_id": user_id, "user_name": user_name, "messages": messages}
+        return self.render_template("bmail_browse.html", params=params)
 
 
 app = webapp2.WSGIApplication([
     webapp2.Route('/', LoginHandler, name="login_form"),
     webapp2.Route('/create', CreateHandler, name="create_form"),
     webapp2.Route('/browse', BrowseMsgHandler, name="browse_msg"),
-    webapp2.Route('/edit', EditMsgHandler, name="edit_msg"),
+    webapp2.Route('/edit/<user_id:\d+>', EditMsgHandler, name="edit_msg"),
+    webapp2.Route('/received/<user_id:\d+>', ReceivedMsgHandler, name="received_msg"),
+    webapp2.Route('/sent/<user_id:\d+>', SentMsgHandler, name="sent_msg"),
 ], debug=True)

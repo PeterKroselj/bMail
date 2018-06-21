@@ -7,15 +7,55 @@
 <body>
 
 <ul>
-  <li><a class="active" href="#home">Received</a></li>
-  <li><a href="#Sent">Sent</a></li>
-  <li><a href="edit">New</a></li>
+  <li><a class="active" href="/received/{{ user_id }}">Received</a></li>
+  <li><a href="/sent/{{ user_id }}">Sent</a></li>
+  <li><a href="/edit/{{ user_id }}">New</a></li>
+  <li><a href="/">Logout</a></li>
 </ul>
 
-    <h1>Messages</h1>
+    {% if sent %}
+      <h1>Sent messages ({{ user_name }})</h1>
+    {% else %}
+      <h1>Received messages ({{ user_name }})</h1>
+    {% endif %}
 
-    {% for msg in messages %}
-        <p>{{ msg.from_user }}, {{ msg.to_user }}, {{ msg.key.id() }}, {{ msg.msg_text }}</p>
-    {% endfor %}
+    <h3>User ID: {{ user_id }}</h3>
+
+    {% if sent %}
+      <table>
+        <tr>
+          <th>To</th>
+          <th>Date/Time</th>
+          <th>Message</th>
+        </tr>
+        {% for msg in messages %}
+        <tr>
+          <td>{{ msg.to_user }}</td>
+          <td>{{ msg.sent_date }}</td>
+          <td>{{ msg.msg_text }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <table>
+        <tr>
+          <th>From</th>
+          <th>Date/Time</th>
+          <th>Message</th>
+        </tr>
+        {% for msg in messages %}
+        <tr>
+          <td>{{ msg.from_user }}</td>
+          <td>{{ msg.sent_date }}</td>
+          <td>{{ msg.msg_text }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+
+
 </body>
 </html>
+
+
+
